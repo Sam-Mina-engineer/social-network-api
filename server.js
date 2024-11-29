@@ -1,5 +1,5 @@
 const express = require('express');
-const db = require('./config/connection');
+const connectDB = require('./config/connection'); // Import the connection function
 const routes = require('./routes');
 
 const PORT = process.env.PORT || 3001;
@@ -14,15 +14,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(routes);
 
-// Server starting and connecting to Mongo
+// Connect to MongoDB and start the server
 
-db.once('open', () => {
+connectDB().then(() => {
   app.listen(PORT, () => {
-    console.log(`API server running at ${PORT}!`);
+    console.log(`API server running on port ${PORT}!`);
   });
+}).catch((err) => {
+  console.error('MongoDB connection error:', err);
 });
-
-db.on('error', (err) => {
-  console.error('MongoDB error:', err);
-});
-
